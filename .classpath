@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="test/resources"/>
+	<classpathentry kind="src" path="src/resources"/>
+	<classpathentry kind="src" path="test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/java/httpclient-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/java/httpcore-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/java/httpcore-nio-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/java/httpmime-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-lang-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/java/log4j-1.2.13.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/dmd-utils-trunk"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="lib/java/jnotify-0.93.jar"/>
+	<classpathentry kind="lib" path="lib/java/i386"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

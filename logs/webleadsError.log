@@ -1,0 +1,16 @@
+2010-06-04 15:40:12,064 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:40:12,064 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist
+2010-06-04 15:41:26,803 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:41:26,803 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist
+2010-06-04 15:46:19,298 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:46:19,299 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist
+2010-06-04 15:48:43,094 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:48:43,094 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist
+2010-06-04 15:49:08,962 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:49:08,962 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist
+2010-06-04 15:50:28,710 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:50:28,710 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist
+2010-06-04 15:51:18,000 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:51:18,001 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist
+2010-06-04 15:53:04,440 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_00000' does not exist
+2010-06-04 15:53:04,440 ERROR [FSEvent thread]  SequentialLogFileSourceIterator:93 - previous sequential logfile '/private/var/folders/MV/MVd5MS2iF+uby2hc2qXrGk+++TI/-Tmp-/clickstream_log_12343' does not exist

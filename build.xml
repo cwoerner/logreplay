@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="logreplay" default="all">
+	<description>
+		build script for logreplay
+	</description>
+
+	<!-- when called as an ant call, this must be set to database/migration //-->
+	<property name="basedir" value="." />
+	<property environment="env"/>
+
+	<property file="${basedir}/build.properties"/>
+	<!-- svn.username and svn.password //-->
+	<property file="${user.home}/build.dependencies-local.properties" />
+	<property file="${basedir}/build.dependencies.properties" />
+
+	<property name="svn.revision.number" value="devBuild" />
+	<property name="haproxy-log-replay-tool.dist.number" value="${haproxy-log-replay-tool.build.version}-b#${svn.revision.number}" />
+	<property name="haproxy-log-replay-tool.dist.vname" value="${haproxy-log-replay-tool.dist.name}-${haproxy-log-replay-tool.build.version}" />
+
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="haproxy-log-replay-tool.src.dir" value="${basedir}/src" />
+	<property name="haproxy-log-replay-tool.src.bin.dir" value="${basedir}/src/bin" />
+	<property name="haproxy-log-replay-tool.src.java.dir" value="${haproxy-log-replay-tool.src.dir}/java" />
+	<property name="haproxy-log-replay-tool.src.resources.dir" value="${haproxy-log-replay-tool.src.dir}/resources" />
+	<property name="haproxy-log-replay-tool.lib.dir" value="${basedir}/lib" />
+	<property name="haproxy-log-replay-tool.lib.java.dir" value="${haproxy-log-replay-tool.lib.dir}/java" />
+	<property name="haproxy-log-replay-tool.build.dir" value="${basedir}/build" />
+        <property name="haproxy-log-replay-tool.build.lib.dir" value="${haproxy-log-replay-tool.build.dir}/lib" />
+	<property name="haproxy-log-replay-tool.build.java.dir" value="${haproxy-log-replay-tool.build.dir}/java" />
+	<property name="haproxy-log-replay-tool.release.dir" value="${basedir}/release" />
+
+	<property name="haproxy-log-replay-tool.test.dir" value="${basedir}/test" />
+	<property name="haproxy-log-replay-tool.test.resources.dir" value="${haproxy-log-replay-tool.test.dir}/resources" />
+	<property name="haproxy-log-replay-tool.test.java.dir" value="${haproxy-log-replay-tool.test.dir}/java"/>
+	<property name="haproxy-log-replay-tool.test.results.dir" value="${basedir}/testResults"/>
+	<property name="haproxy-log-replay-tool.build.test.classes.java.dir" value="${haproxy-log-replay-tool.build.dir}/test/java/classes"/>
+
+	
+	<property file="${basedir}/build.properties"/>
+	<property file="${haproxy-log-replay-tool.src.java.dir}/haproxy-log-replay-tool.properties" />
+
+	<property name="haproxy-log-replay-tool.release.version.zip.dir" value="${haproxy-log-replay-tool.release.dir}/${haproxy-log-replay-tool.dist.vname}" />
+	<property name="haproxy-log-replay-tool.release.version.dir" value="${haproxy-log-replay-tool.release.version.zip.dir}/${haproxy-log-replay-tool.dist.vname}" />
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	  <classpath>
+	    <pathelement location="${haproxy-log-replay-tool.lib.java.dir}/ant-contrib-1.0b3.jar"/>
+	  </classpath>
+	</taskdef>
+
+
+    <!-- Note: Opted for uname over the java system properties "sun.arch.data.model" or "os.arch" since these only
+         return the architecture of the running jvm which can differ from the actual os architecture -->
+	<target name="detectArch" unless="isWindows">
+          <exec executable="uname" outputproperty="osArch">
+            <arg value="-p"/>
+          </exec> 
+          <echo>Processor type: ${osArch}
+	    java.library.path: ${java.library.path}
+	    </echo>
+	</target>
+	
+
+	<!-- testing targets //-->
+		
+	<target name="test" depends="test.java" />
+    <target name="coverage.testAndReport" depends="test" description="implement this to have code coverage reports">
+		<echo>No code coverage enabled yet - want to help? --- JUST UNIT TESTS</echo>
+        <antcall target="check.build.failed"/>
+    </target>
+    <target name="check.build.failed">
+        <fail message="Webleads Build Failed" if="build.failed"/>
+        <fail message="Webleads Build Failed: One or more common dependency tests failed" if="dependency.test.failed"/>
+    </target>
+	
+	<target name="prepare.tests.java" depends="prepare">
+		<delete dir="${haproxy-log-replay-tool.test.results.dir}" failonerror="false"/>
+		<mkdir dir="${haproxy-log-replay-tool.test.results.dir}"/>
+		<mkdir dir="${haproxy-log-replay-tool.build.test.classes.java.dir}" />
+	</target>
+
+	<target name="clean.test">
+		<delete dir="${haproxy-log-replay-tool.test.results.java.dir}" failonerror="false" />
+		<delete dir="${haproxy-log-replay-tool.build.test.classes.java.dir}" failonerror="false" />
+	</target>
+
+	<target name="compile.tests.java" depends="prepare.tests.java, compile.java">
+		<javac srcdir="${haproxy-log-replay-tool.test.java.dir}" destdir="${haproxy-log-replay-tool.build.test.classes.java.dir}" debug="on" debuglevel="lines,vars,source">
+
+			<!-- the whole classpath including all dependencies //-->
+			<classpath refid="classpath" />
+
+			<classpath>
+			  	<fileset dir="${haproxy-log-replay-tool.lib.dir}" includes="**/*jar" />
+			  	<pathelement path="${haproxy-log-replay-tool.test.resources.dir}/" />
+				<pathelement path="${haproxy-log-replay-tool.build.java.dir}/" />
+			</classpath>
+
+			<include name="**/*.java"/>
+		</javac>
+
+		<!-- Use this to copy test resources when we need to -->
+		<copy todir="${haproxy-log-replay-tool.build.test.classes.java.dir}">
+			<fileset dir="${haproxy-log-replay-tool.test.java.dir}">
+				<include name="**/*.properties" />
+			</fileset>
+			<fileset dir="${haproxy-log-replay-tool.test.resources.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="test.java" depends="compile.tests.java, detectArch">
+
+		<junit haltonfailure="no" failureproperty="tests.fail" fork="true" forkmode="once" maxmemory="1024M">
+		  <sysproperty key="java.library.path" value="${java.library.path}:${basedir}/lib/java/${osArch}" />
+			<classpath>
+    	  		<fileset dir="${haproxy-log-replay-tool.lib.dir}" includes="**/*jar" />
+			  	<pathelement path="${haproxy-log-replay-tool.build.test.classes.java.dir}/" />
+			  	<pathelement path="${haproxy-log-replay-tool.test.resources.dir}/" />
+			  	<pathelement path="${haproxy-log-replay-tool.src.resources.dir}/common" />
+				<pathelement path="${haproxy-log-replay-tool.build.java.dir}/" />
+		  	</classpath>
+
+			<formatter type="xml" />
+			<batchtest  todir="${haproxy-log-replay-tool.test.results.dir}">
+				<fileset dir="${haproxy-log-replay-tool.build.test.classes.java.dir}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<echo message="tests.fail: ${tests.fail}"/>
+		<fail message="At least one unit test failed" if="tests.fail"/>
+
+	</target>
+
+	<target name="run.tests.java.one" depends="compile.tests.java">
+
+		<junit haltonfailure="no" failureproperty="tests.fail" fork="true" forkmode="once" maxmemory="1024M">
+			<classpath>
+		    	  <fileset dir="${haproxy-log-replay-tool.lib.dir}" includes="**/*jar" />
+				  <pathelement path="${haproxy-log-replay-tool.build.test.classes.java.dir}/" />
+				  <pathelement path="${haproxy-log-replay-tool.test.resources.dir}/" />
+		  	</classpath>
+
+			<formatter usefile="false" type="plain"/>
+			<test name="${test.class}" />
+		</junit>
+	</target>
+
+	<!-- end test targets //-->
+
+
+
+	<target name="all" depends="clean, test, package" description="builds all artifacts (jar, zip)" />
+
+	<target name="prepare" depends="detectArch"  description="creates the subdirectories necessary for build and package targets">
+	  <mkdir dir="${build.dir}" />
+	  <mkdir dir="${haproxy-log-replay-tool.build.dir}" />
+	  <mkdir dir="${haproxy-log-replay-tool.build.java.dir}" />
+	  <mkdir dir="${haproxy-log-replay-tool.release.dir}" />
+	  <mkdir dir="${haproxy-log-replay-tool.release.version.dir}" />
+	</target>
+
+	<target name="clean" description="removes the build and release directories">
+	  <delete dir="${haproxy-log-replay-tool.build.dir}" failonerror="false" />
+	  <delete dir="${haproxy-log-replay-tool.release.dir}" failonerror="false" />
+	  <delete dir="${haproxy-log-replay-tool.test.results.dir}" failonerror="false" />
+	  <delete dir="${build.dir}" failonerror="false" />
+	</target>
+
+	<target name="compile" depends="compile.java" description="compile all java sources" />
+	
+	<target name="compile.java" depends="prepare" description="compiles java source and copies artifacts into the build directories in preparation for packaging">
+	  
+		<path id="classpath">
+	    	  <fileset dir="${haproxy-log-replay-tool.lib.dir}" includes="**/*jar" />
+	  	</path>
+	  
+		<path id="classpath.compile">
+		  <path refid="classpath" />
+		</path>
+	  		
+		<javac srcdir="${haproxy-log-replay-tool.src.java.dir}" destdir="${haproxy-log-replay-tool.build.java.dir}"
+			debug="on" debuglevel="lines,vars,source">
+			<classpath refid="classpath.compile" />
+		</javac>
+	  
+	  	<copy todir="${haproxy-log-replay-tool.build.java.dir}" overwrite="true">
+			<fileset dir="${haproxy-log-replay-tool.src.java.dir}">
+	      		<include name="**/hibernate.cfg.xml"/>
+	      		<include name="**/*.hbm.xml" />
+	      		<include name="**/*.vm"/>
+	    	</fileset>	    	
+	    	<fileset dir="${haproxy-log-replay-tool.src.resources.dir}">
+	      		<include name="**/*.properties" />
+	      		<include name="**/*.xml" />
+	    	</fileset>
+	    	<fileset dir="${haproxy-log-replay-tool.src.java.dir}">
+	      		<include name="**/*.properties" />
+	      		<include name="**/*.xml" />
+	    	</fileset>
+	  	</copy>
+		
+	</target>
+
+	<target name="prepare.package" depends="prepare">
+		<mkdir dir="${haproxy-log-replay-tool.release.version.dir}/src" />
+	  	<mkdir dir="${haproxy-log-replay-tool.release.version.dir}/lib" />
+		<echo file="${haproxy-log-replay-tool.release.version.dir}/build_info.properties">build.number=${haproxy-log-replay-tool.dist.number}${line.separator}</echo>			
+	</target>
+	
+	<target name="package" depends="compile, prepare.package" description="packages up a distribution of the current version">
+
+	  
+		<copy todir="${haproxy-log-replay-tool.release.version.dir}/src">
+	    	<fileset dir="${haproxy-log-replay-tool.src.dir}">
+	      		<include name="**/*" />
+	      		<exclude name="*.svn*" />	
+	      		<exclude name="java/*" />	
+	    	</fileset>
+	  	</copy>
+	  
+	  	<copy file="build.xml" todir="${haproxy-log-replay-tool.release.version.dir}" />
+	  	<copy file="build.properties" todir="${haproxy-log-replay-tool.release.version.dir}" />
+	  <echo>release.version.dir=${haproxy-log-replay-tool.release.version.dir}
+	  lib.java.dir=${haproxy-log-replay-tool.lib.java.dir}
+	  build.lib.dir=${haproxy-log-replay-tool.build.lib.dir}
+	  </echo>
+	  	<copy todir="${haproxy-log-replay-tool.release.version.dir}/lib/java">
+	    	<fileset dir="${haproxy-log-replay-tool.lib.java.dir}">
+	      		<include name="*jar" />
+	      		<include name="**/*.so" />
+	      		<include name="**/*.jnilib" />
+	      		<exclude name="*.svn" />
+	    	</fileset>
+		 <fileset dir="${haproxy-log-replay-tool.lib.dir}">
+                     <include name="*jar" />
+                     <exclude name="*.svn" />
+                 </fileset>
+	  	</copy>
+	  
+	  	<copy todir="${haproxy-log-replay-tool.release.version.dir}/bin">
+	    	<fileset dir="${haproxy-log-replay-tool.src.bin.dir}">
+	      		<include name="**/*" />	
+	      		<exclude name="*.svn*" />
+	    	</fileset>
+	  	</copy>
+
+	  	<copy file="${basedir}/README" todir="${haproxy-log-replay-tool.release.version.dir}" />
+	  	<copy file="${basedir}/Changes" todir="${haproxy-log-replay-tool.release.version.dir}" />
+	  
+	  	<jar destfile="${haproxy-log-replay-tool.release.dir}/${haproxy-log-replay-tool.dist.name}.jar" basedir="${haproxy-log-replay-tool.build.dir}/java">
+	  		<manifest>
+	  			<attribute name="Implementation-Version" value="${haproxy-log-replay-tool.dist.number}"/>
+	  			<attribute name="Main-Class" value="logreplay.HAProxyLogReplayer"/>
+	  		</manifest>
+		</jar>
+
+	  	<copy file="${haproxy-log-replay-tool.release.dir}/${haproxy-log-replay-tool.dist.name}.jar" tofile="${haproxy-log-replay-tool.release.version.dir}/${haproxy-log-replay-tool.dist.vname}.jar" /> 
+	  
+	  	<zip destfile="${haproxy-log-replay-tool.release.version.zip.dir}.zip" basedir="${haproxy-log-replay-tool.release.version.zip.dir}" />
+	  	<echo>${haproxy-log-replay-tool.dist.number}</echo>		
+	</target>
+
+
+
+	<property name="install.basedir.unix" value="/opt/logreplay" />
+	<property name="install.user.owner.unix" value="root" />
+	<property name="install.user.executor.unix" value="logreplay" />
+        <property name="install.user.password.executor.unix" value="!!" />
+	<property name="install.group.executor.unix" value="scribed" />
+	<property name="install.user.executor.home.dir.unix" value="/var/lib/${install.user.executor.unix}" />
+	<property name="install.dir.unix" value="${install.basedir.unix}/${haproxy-log-replay-tool.dist.vname}" />
+	<property name="install.symlink.unix" value="${install.basedir.unix}/${haproxy-log-replay-tool.dist.name}" />
+	<property name="install.logs.dir.unix" value="/var/log/${haproxy-log-replay-tool.dist.name}" />
+	<property name="install.logs.symlink.unix" value="${install.dir.unix}/logs" />
+		
+	<property name="install.basedir.windows" value="C:/logreplay" />
+	<property name="install.dir.windows" value="${install.basedir.windows}/${haproxy-log-replay-tool.dist.vname}" />
+
+	<condition property="isWindows">
+	  <os family="windows"/>
+	</condition>
+	
+	<condition property="isMac">
+	  <os family="mac" />
+	</condition>
+
+	<target name="deploy.production" depends="deploy.unix.cli.production, deploy.windows.cli.production" description="deploys the application">	  
+	</target>
+	<target name="deploy.development" depends="deploy.unix.cli.development, deploy.windows.cli.development" description="deploys the application">
+	</target>
+
+	<target name="prepare.deploy.unix" unless="isWindows">
+	  <echo>Preparing unix environment for deployment</echo>
+	  
+		<mkdir dir="${install.dir.unix}" />
+		<mkdir dir="${install.dir.unix}/src/bin" />
+
+                <exec dir="." executable="sh">
+		  <!-- must be a regular (non-system) user with a login shell for su //-->
+                        <arg line="${basedir}/src/bin/deployment/mkuser.sh" />
+                        <!-- user //-->
+                        <arg line="${install.user.executor.unix}" />
+                        <!-- group //-->
+                        <arg line="${install.user.executor.unix}" />
+			<!-- password //-->
+			<arg line="!!" />
+                        <!-- additional groups //-->
+                        <arg line="${install.group.executor.unix}" />
+			<!-- homedir //-->
+			<arg line="${install.user.executor.home.dir.unix}" />
+                </exec>
+
+		<installExecutorWritableDir dirName="${install.logs.dir.unix}" />
+	</target>
+
+	<target name="prepare.deploy.windows" if="isWindows">
+		<echo>Preparing windows environment for deployment</echo>
+		<mkdir dir="${install.dir.windows}" />
+	</target>
+
+
+	<target name="deploy.unix.cli.production" depends="prepare.deploy.unix, detectArch" unless="isWindows">
+		<deployPackage installDir="${install.dir.unix}" context="production" />
+		<installCron />
+		<installSymlink />
+	</target>
+
+	<target name="deploy.unix.cli.development" depends="prepare.deploy.unix, detectArch" unless="isWindows">
+		<deployPackage installDir="${install.dir.unix}" context="development" />
+		<installCron />
+		<installSymlink />
+	</target>
+
+	<target name="deploy.windows.cli.production" depends="prepare.deploy.windows" if="isWindows">
+		<deployPackage installDir="${install.dir.windows}" context="production" />
+	</target>
+	<target name="deploy.windows.cli.development" depends="prepare.deploy.windows" if="isWindows">
+		<deployPackage installDir="${install.dir.windows}" context="development" />
+	</target>
+		
+	<macrodef name="installSymlink">
+		<!-- points the installation symlink at the newly installed dir //-->
+		<sequential>
+			<echo>symlinking ${install.symlink.unix} -> ${install.dir.unix}</echo>
+			<symlink resource="${install.dir.unix}" link="${install.symlink.unix}" overwrite="true" />
+
+			<echo>symlinking ${install.logs.symlink.unix} -> ${install.logs.dir.unix}</echo>
+			<symlink resource="${install.logs.dir.unix}" link="${install.logs.symlink.unix}" overwrite="true" />
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="deployPackage">
+		<!-- copies, chmods and chowns source and executables from a release package to the install location //-->
+		<attribute name="installDir" />
+		<attribute name="context" />
+
+		<sequential>
+			<copy todir="@{installDir}" file="README" overwrite="true" />
+			<copy todir="@{installDir}" file="Changes" overwrite="true" />
+			<copy todir="@{installDir}" file="${basedir}/build.properties" overwrite="true" />
+
+			<copy todir="@{installDir}" overwrite="true" failonerror="true">
+				<fileset dir=".">
+					<include name="lib/**/*" />
+					<include name="src/bin/**/*" />
+					<exclude name="src/bin/deployment/*" />
+				</fileset>
+			</copy>
+
+			<!-- create the lib/java/arch symlink for arch-specific .so's //-->
+			<symlink resource="${osArch}" link="@{installDir}/lib/java/arch" overwrite="true" />
+
+			<copy todir="@{installDir}/lib/java" file="${haproxy-log-replay-tool.dist.vname}.jar" overwrite="true" />
+
+			<copy todir="@{installDir}/src/resources/" flatten="true" overwrite="true">
+				<fileset dir="src/resources/common/">
+					<include name="**/*.properties" />
+					<include name="**/*.xml" />
+					<include name="**/*.conf" />
+				</fileset>
+				<fileset dir="src/resources/@{context}/">
+					<include name="**/*.properties" />
+					<include name="**/*.xml" />
+					<include name="**/*.conf" />
+				</fileset>
+			</copy>
+
+			<chown owner="root" type="file">
+				<fileset dir="@{installDir}/src/bin" includes="**/*" />
+			</chown>
+			<chmod dir="@{installDir}/src/bin" perm="ugo+rx" includes="**/*" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="installCron">
+		<!-- installs crontab entries for daily, hourly, and weekly periods //-->
+		<sequential>
+			<mkdir dir="${install.cron.daily.dir}" />
+			<copy todir="${install.cron.daily.dir}" flatten="true" failonerror="false" overwrite="true">
+				<fileset dir=".">
+					<include name="src/crontab/daily/*" />
+				</fileset>
+			</copy>
+			<chmod perm="555">
+				<fileset dir="${install.cron.daily.dir}">
+					<present present="both" targetdir="src/crontab/daily" />
+				</fileset>
+			</chmod>
+
+
+			<mkdir dir="${install.cron.hourly.dir}" />
+			<copy todir="${install.cron.hourly.dir}" flatten="true" failonerror="false" overwrite="true">
+				<fileset dir=".">
+					<include name="src/crontab/hourly/*" />
+				</fileset>
+			</copy>
+			<chmod perm="555">
+				<fileset dir="${install.cron.hourly.dir}">
+					<present present="both" targetdir="src/crontab/hourly" />
+				</fileset>
+			</chmod>
+
+			<mkdir dir="${install.cron.weekly.dir}" />
+			<copy todir="${install.cron.weekly.dir}" flatten="true" failonerror="false" overwrite="true">
+				<fileset dir=".">
+					<include name="src/crontab/weekly/*" />
+				</fileset>
+			</copy>
+			<chmod perm="555">
+				<fileset dir="${install.cron.weekly.dir}">
+					<present present="both" targetdir="src/crontab/weekly" />
+				</fileset>
+			</chmod>
+
+			<exec dir="." executable="crontab">
+			  <arg line="-u" />
+			  <arg line="${install.user.executor.unix}" />
+			  <arg line="src/crontab/user/${install.user.executor.unix}" />
+			</exec>
+
+		</sequential>
+	</macrodef>
+
+	<macrodef name="installExecutorWritableDir">
+		<!-- Installs a directory with such permissions that the executor user can write to it //-->
+		<attribute name="dirName" />
+		<sequential>
+			<mkdir dir="@{dirName}" />
+			<chown owner="${install.user.executor.unix}" file="@{dirName}" type="dir" />
+			<chgrp group="${install.group.executor.unix}" file="@{dirName}" type="dir" />
+			<chown owner="${install.user.executor.unix}">
+				<fileset dir="@{dirName}" includes="**/*" />
+			</chown>
+			<chgrp group="${install.group.executor.unix}">
+				<fileset dir="@{dirName}" includes="**/*" />
+			</chgrp>
+
+			<chmod file="@{dirName}" perm="2775" type="dir" />
+			<!-- <chmod dir="@{dirName}" perm="664" type="file">
+				<fileset dir="@{dirName}" includes="**/*" />
+			</chmod> //-->
+		</sequential>
+	</macrodef>
+
+
+</project>
