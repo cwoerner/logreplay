@@ -5,7 +5,7 @@
 # 
 # If invoked as mksystemuser.sh (via a symlink to mkuser.sh) a system user will be created without a password
 #    
-# author:  cwoerner@demandbase.com
+# author:  Charles Woerner charleswoerner@gmail.com
 # date:    Thu May 21 20:15:01 PDT 2009
 #
 
@@ -198,11 +198,11 @@ if [ "x$os" == "xLinux" ]; then
 		    fi
 		fi
 
-		echo "adding user ($useradd -c 'demandbase system user' $homedir -g $gid $password_opt -s $shell $username) ..."
-	     	msg=`$useradd -c "demandbase system user" $homedir -g $gid $password_opt -s $shell $username`;
+		echo "adding user ($useradd -c 'system user' $homedir -g $gid $password_opt -s $shell $username) ..."
+	     	msg=`$useradd -c "system user" $homedir -g $gid $password_opt -s $shell $username`;
 		rc=$?;
 		if [ $rc -ne 0 ]; then
-		    echo "failed to add user ($useradd -c 'demandbase system user' $homedir -g $gid $password_opt -s $shell $username): $msg";
+		    echo "failed to add user ($useradd -c 'system user' $homedir -g $gid $password_opt -s $shell $username): $msg";
 		    exit $rc;
 		fi;
 
@@ -217,11 +217,11 @@ if [ "x$os" == "xLinux" ]; then
 		add_user_to_group "$username" "$additional_groups" $groupadd;
 
 	else		
-		echo "modifying user ($usermod -c 'demandbase system user' $homedir -g $gid -s $shell $username) ..."
-		msg=`$usermod -c "demandbase system user" $homedir -g $gid -s $shell $username`;
+		echo "modifying user ($usermod -c 'system user' $homedir -g $gid -s $shell $username) ..."
+		msg=`$usermod -c "system user" $homedir -g $gid -s $shell $username`;
 		rc=$?;
 		if [ $rc -ne 0 ]; then
-		    echo "failed to modify user ($usermod  -c 'demandbase system user' $homedir -g $gid -s $shell $username): $msg";
+		    echo "failed to modify user ($usermod  -c 'system user' $homedir -g $gid -s $shell $username): $msg";
 		    exit $rc;
 		fi;
 
@@ -276,7 +276,7 @@ else
 	    dscl . -create /users/$username gid $gid
 	    dscl . -create /users/$username shell $shell
 	    dscl . -create /users/$username passwd $password;
-	    dscl . -create /users/$username realname "Demandbase System User"
+	    dscl . -create /users/$username realname "System User"
 	fi;
     else
 	echo "unsupported os (`uname`)"; 
