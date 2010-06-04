@@ -2,9 +2,11 @@ README for haproxy-log-replay-tool
 
 BUILDING
 
+ant package
 
 INSTALLATION
 
+ant deploy.production
 
 RUNNING
 
