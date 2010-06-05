@@ -13,3 +13,4 @@ RUNNING
 Requires installation of libjnotify.so in /usr/lib
 
 (for windows, jnotify.dll needs to be copied into a directory referenced by the PATH env var)
+ 
