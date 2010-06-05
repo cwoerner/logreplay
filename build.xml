@@ -250,7 +250,6 @@
 	  	</copy>
 
 	  	<copy file="${basedir}/README" todir="${haproxy-log-replay-tool.release.version.dir}" />
-	  	<copy file="${basedir}/Changes" todir="${haproxy-log-replay-tool.release.version.dir}" />
 	  
 	  	<jar destfile="${haproxy-log-replay-tool.release.dir}/${haproxy-log-replay-tool.dist.name}.jar" basedir="${haproxy-log-replay-tool.build.dir}/java">
 	  		<manifest>
@@ -362,7 +361,6 @@
 
 		<sequential>
 			<copy todir="@{installDir}" file="README" overwrite="true" />
-			<copy todir="@{installDir}" file="Changes" overwrite="true" />
 			<copy todir="@{installDir}" file="${basedir}/build.properties" overwrite="true" />
 
 			<copy todir="@{installDir}" overwrite="true" failonerror="true">
