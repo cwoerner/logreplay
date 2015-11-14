@@ -374,8 +374,8 @@
 			<!-- create the lib/java/arch symlink for arch-specific .so's //-->
 			<symlink resource="${osArch}" link="@{installDir}/lib/java/arch" overwrite="true" />
 
-			<copy todir="@{installDir}/lib/java" file="${haproxy-log-replay-tool.dist.vname}.jar" overwrite="true" />
-
+<!--			<copy todir="@{installDir}/lib/java" file="${haproxy-log-replay-tool.release.dir}/${haproxy-log-replay-tool.dist.vname}.jar" overwrite="true" /> //-->
+                        <copy todir="@{installDir}/lib/java" file="${haproxy-log-replay-tool.release.dir}/${haproxy-log-replay-tool.dist.name}.jar" overwrite="true" />
 			<copy todir="@{installDir}/src/resources/" flatten="true" overwrite="true">
 				<fileset dir="src/resources/common/">
 					<include name="**/*.properties" />

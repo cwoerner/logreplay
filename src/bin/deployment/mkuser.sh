@@ -234,7 +234,7 @@ else
     if [ "x$os" == "xDarwin" ]; then
 
 	nopasswd="'*'";
-	if [ -z "$password" || $password = '!!' ]; then password=$nopasswd; fi;
+	if [ -z "$password" -o $password = '!!' ]; then password=$nopasswd; fi;
 
 	# if the group exists then make sure it has a gid and create one for it if not
 	if [ ! -z "`dscl . -search /groups name $groupname`" ]; then

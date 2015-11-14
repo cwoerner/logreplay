@@ -50,7 +50,9 @@ public abstract class HttpGetRequestRunner implements Runnable {
 			}
 		}
 		Properties config = new Properties();
-		config.load(HttpGetRequestRunner.class.getResourceAsStream(surrogateFile));
+                System.err.println("loading config from file " + fileName);
+		//config.load(getClass().getClassLoadeer().getResourceAsStream(fileName));
+                config.load(ClassLoader.getSystemClassLoader().getSystemResourceAsStream(fileName));
 		return config;
 	}
 
