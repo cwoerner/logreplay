@@ -23,6 +23,23 @@ import org.apache.log4j.Logger;
  * 	
  * 		Apr 21 21:47:10 localhost.localdomain haproxy[9898]: 127.0.0.1:56814 [21/Apr/2010:21:47:09.509] leads-http-fe leads-http-be/www1 22/0/98/102/503 200 390 - - ---- 35/35/32/32/0 0/0 {http://www.foo.com/path/to/something/|Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_8; en-us) AppleWebKit/531.22.7 (KHTML, like Gecko) Version/4.0.5 Safari/531.22.7|} "GET /somepath/to/someresource HTTP/1.1"
  * 
+ * Example haproxy httplog configuration for the frontend section would be:
+ * <pre>
+ *   frontend leads-http-fe
+ *       bind            *:80
+ *       mode            http
+ *       log             global
+ *       option          httplog
+ *       option          dontlognull
+ *       option          httpclose
+ *       option          forwardfor
+ *       clitimeout      30000
+ *       default_backend leads-http-be
+ *
+ *       capture request  header Referer len 192
+ *       capture request  header User-Agent len 128
+ *       capture request  header X-Forwarded-For len 192
+ * </pre>
  * @author cwoerner
  *
  */
