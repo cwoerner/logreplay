@@ -6,12 +6,18 @@ BUILDING
 
 INSTALLATION
 
-The ant deploy.* targets install the system into /opt/logreplay
+The ant deploy.* targets install the system into /opt/logreplay.  Configuration
+files will be deployed to /opt/logreplay/haproxy-log-replay-tool/src/resources/.
+Scripts will be installed to /opt/logreplay/haproxy-log-replay-tool/src/bin/.
 
 To install the system with a simple configuration file enabling you to replay 
 an existing haproxy log:
 
     ]$ ant deploy.development 
+
+The configuration file installed by deploy.development will enable the replayer
+to consume a single log file called  
+/opt/logreplay/haproxy-log-replay-tool/logs/haproxy.log
 
 To install the system with a configuration suitable for "tailing" the files in 
 a directory as they are created (e.g. to consume the output of something like 
